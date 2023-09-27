@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Http\Requests;
-
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-class HeadsRequest extends FormRequest
+class BanksRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,19 +23,20 @@ class HeadsRequest extends FormRequest
      * @return array<string, mixed>
      */
     public function rules()
-    {   
-
+    {
         $store = [
-            'name' => 'required|alpha',
-            'color' => 'required|string',
-            'typeoftransaction_id' => 'required|numeric',
+            'bank_name' => 'required|alpha',
+            'holder_name' => 'required|alpha',
+            'account_number' => 'required|numeric',
+            'ifsc_code' => 'required|alpha_num'
         ];
 
         $update=[
             
-            'name' => 'required|alpha',
-            'color' => 'required|string',
-            'typeoftransaction_id' => 'required|numeric',
+            'bank_name' => 'required|alpha',
+            'holder_name' => 'required|alpha',
+            'account_number' => 'required|numeric',
+            'ifsc_code' => 'required|alpha_num'
 
         ];
 
@@ -66,13 +66,4 @@ class HeadsRequest extends FormRequest
     );
     
     }
-    public function messages()
-    {
-        return [
-            'color.required' => 'Please fill color field',
-           
-        ];
-    }
-    
 }
-?>

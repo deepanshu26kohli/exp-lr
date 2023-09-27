@@ -14,24 +14,86 @@ class HeadController extends Controller
         return json_encode($data);
     }
     public function store(HeadsRequest $request)
-    {
+    {   
         $head = new Head();
         $head->name = $request->name;
         $head->color = $request->color;
         $head->typeoftransaction_id = $request->typeoftransaction_id;
         $head->save();
-        return true;
+        return json_encode(["message" => "Head added Successfully", "status" => 200]);
     }
-    public function update($id)
+    public function edit($id)
     {
-        $head = Head::find($id);
-        if (!$head) {
-            return false;
+        if ($id < 0 || !is_numeric($id)) {
+            return ([
+                'status' => 200,
+                'message' => "Enter valid id",
+            ]);
         }
-        $head->name = request('name');
-        $head->color = request('color');
-        $head->typeoftransaction_id = request('typeoftransaction_id');
-        $head->save();
-        return true;
+        $head = Head::with(["type_of_transaction:id,name"])->find($id);
+        if(!$head){
+            return json_encode(["message"=>"Head is not available"]);
+        }
+        return ([
+            'status' => 200,
+            'head' => $head,
+        ]);
+    }
+    public function update(HeadsRequest $request, $id)
+    {
+        if ($id < 0 || !is_numeric($id)) {
+            return ([
+                'status' => 200,
+                'message' => "Enter valid id",
+            ]);
+        }
+        $head = Head::with(["type_of_transaction:id,name"])->find($id);
+        if(!$head){
+            return json_encode(["message"=>"Head is not available"]);
+        }
+        $head->name = $request->name;
+        $head->color = $request->color;
+        $head->typeoftransaction_id = $request->typeoftransaction_id;
+        $check = $head->update();
+        if($check){
+            return ([
+                'status' => 200,
+                'message' => "Head Updated Successfully",
+            ]);
+        }
+        else{
+            return ([
+                'status' => 200,
+                'message' => "Head Not Updated ",
+            ]);
+        }
+       
+    }
+    public function destroy($id){
+        if ($id < 0 || !is_numeric($id)) {
+            return ([
+                'status' => 200,
+                'message' => "Enter valid id",
+            ]);
+        }
+        $head = Head::with(["type_of_transaction:id,name"])->find($id);
+        if(!$head){
+            return json_encode(["message"=>"Head is not available"]);
+        }
+        
+        $check = $head->delete();
+        if($check){
+            return response()->json([
+                'status' => 200,
+                'message' => "Head deleted successfully",
+         ]);
+        }
+        else{
+            return response()->json([
+                'status' => 200,
+                'message' => "Could not delete head",
+         ]);
+        }
+        
     }
 }
