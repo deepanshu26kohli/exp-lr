@@ -29,13 +29,24 @@ Route::group(['middleware' => ['web','auth:api']], function()
     Route::get('edit-bank/{id}',[BankController::class,'edit']);
     Route::put('update-bank/{id}',[BankController::class,'update']);
     Route::delete('delete-bank/{id}',[BankController::class,'destroy']);
+    //TotalAmount API    BankAmount API    CashAmount API
+    Route::get('/getTotalAmount',[BankController::class,'getTotalAmount']);
+    Route::get('/getBankAmount',[BankController::class,'getBankAmount']);
+    Route::get('/getCashAmount',[BankController::class,'getCashAmount']);
     //Transaction API
     Route::get('/transaction',[TransactionController::class,'getTransaction']);
+    Route::post('/add-transaction',[TransactionController::class,'store']);
+    Route::get('edit-transaction/{id}',[TransactionController::class,'edit']);
+    Route::put('update-transaction/{id}',[TransactionController::class,'update']);
+    Route::delete('delete-transaction/{id}',[TransactionController::class,'destroy']);
+    //Income API       Expense API
+    Route::get('/totalincome',[TransactionController::class,'income']);
+    Route::get('/totalexpense',[TransactionController::class,'expense']);
 });
 
 
 
-//Head Api
+
 
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {

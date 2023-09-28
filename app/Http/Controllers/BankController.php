@@ -13,19 +13,36 @@ class BankController extends Controller
 {
     public function getbank()
     {
-        $data =  Bank::get()->toArray();
+        $data =  Bank::where('ifbank',1)->get()->toArray();
         return json_encode($data);
     }
     public function store(BanksRequest $request)
     {
         $data = [];
+     
         DB::beginTransaction();
         try {
             $bank = new Bank();
-            $bank->bank_name = $request->bank_name;
-            $bank->holder_name = $request->holder_name;
-            $bank->account_number = $request->account_number;
-            $bank->ifsc_code = $request->ifsc_code;
+            if($request->bank_name == "Cash"){
+                Log::info($request->bank_name);
+                $bank->bank_name = $request->bank_name;
+                $bank->ifbank = 0;
+                $bank->holder_name = "0";
+                $bank->account_number = "0";
+                $bank->ifsc_code = 0;
+                $bank->bank_balance = $request->bank_balance;
+            }
+            else{
+                $bank->bank_name = $request->bank_name;
+                $bank->holder_name = $request->holder_name;
+                $bank->account_number = $request->account_number;
+                $bank->ifsc_code = $request->ifsc_code;
+                $bank->ifbank = 1;
+                $bank->bank_balance = $request->bank_balance;
+            }
+          
+            
+            
             $bank->save();
             DB::commit();
             $data["message"] = "Bank added Successfully";
@@ -36,6 +53,7 @@ class BankController extends Controller
             DB::rollBack();
             $data["message"] = "Bank Not added ! ";
             $data["status"] = 422;
+            Log::info($e);
             return json_encode($data);
         }
     }
@@ -68,10 +86,23 @@ class BankController extends Controller
         if (!$bank) {
             return json_encode(["message" => "Bank is not available"]);
         }
-        $bank->bank_name = $request->bank_name;
-        $bank->holder_name = $request->holder_name;
-        $bank->account_number = $request->account_number;
-        $bank->ifsc_code = $request->ifsc_code;
+        if($request->bank_name == "Cash"){
+            Log::info($request->bank_name);
+            $bank->bank_name = "Cash";
+            $bank->ifbank = 0;
+            $bank->holder_name = "0";
+            $bank->account_number = "0";
+            $bank->ifsc_code = 0;
+            $bank->bank_balance = $request->bank_balance;
+        }
+        else{
+            $bank->bank_name = $request->bank_name;
+            $bank->holder_name = $request->holder_name;
+            $bank->account_number = $request->account_number;
+            $bank->ifsc_code = $request->ifsc_code;
+            $bank->ifbank = 1;
+            $bank->bank_balance = $request->bank_balance;
+        }
         $check = $bank->update();
         if($check){
             return ([
@@ -109,6 +140,33 @@ class BankController extends Controller
                 'status' => 422,
                 'message' => "Could not delete bank ",
          ]);
+        }
+    }
+    public function getTotalAmount(){
+        $totalAmount = Bank::sum('bank_balance');
+        if($totalAmount){
+            return json_encode(["totalAmount"=>$totalAmount,  'status' => 200,]);
+        }
+        else{
+            return json_encode(["message"=>"Could not fetch the total balance",'status' => 200]);
+        }
+    }
+    public function getBankAmount(){
+        $totalAmount = Bank::where('ifbank',1)->sum('bank_balance');
+        if($totalAmount){
+            return json_encode(["totalAmount"=>$totalAmount,  'status' => 200,]);
+        }
+        else{
+            return json_encode(["message"=>"Could not fetch the total bank balance",'status' => 422]);
+        }
+    }
+    public function getCashAmount(){
+        $totalAmount = Bank::where('ifbank',0)->sum('bank_balance');
+        if($totalAmount){
+            return json_encode(["totalAmount"=>$totalAmount,  'status' => 200,]);
+        }
+        else{
+            return json_encode(["message"=>"Could not fetch the total cash balance",'status' => 422]);
         }
     }
 }

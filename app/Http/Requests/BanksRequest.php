@@ -28,7 +28,8 @@ class BanksRequest extends FormRequest
             'bank_name' => 'required|alpha',
             'holder_name' => 'required|alpha',
             'account_number' => 'required|numeric',
-            'ifsc_code' => 'required|alpha_num'
+            'ifsc_code' => 'required|alpha_num',
+            // 'ifbank' => 'required|boolean'
         ];
 
         $update=[
@@ -36,8 +37,9 @@ class BanksRequest extends FormRequest
             'bank_name' => 'required|alpha',
             'holder_name' => 'required|alpha',
             'account_number' => 'required|numeric',
-            'ifsc_code' => 'required|alpha_num'
-
+            'ifsc_code' => 'required|alpha_num',
+            // 'ifbank' => 'required|boolean',
+            'bank_balance' => 'required|numeric'
         ];
 
         if($this->method() == 'POST'){

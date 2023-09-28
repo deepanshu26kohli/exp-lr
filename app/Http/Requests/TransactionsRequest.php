@@ -3,7 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class TransactionsRequest extends FormRequest
 {
     /**
@@ -13,7 +14,7 @@ class TransactionsRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,29 @@ class TransactionsRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'amount' => 'required|numeric',
+            'head_id' => 'required|integer',
+            'bank_id' => 'required|integer',
+            'typeoftransaction_id' => 'required|integer',
+            'date' => 'required|date',
+
         ];
+    }
+    public function failedValidation(Validator $validator)
+
+    {
+                
+                throw new HttpResponseException(response()->json([
+                
+                'success'  => false,
+                
+                'message'  => 'Please fill required fields properly',
+                
+                'data'   => $validator->errors()
+                
+                ])
+
+    );
+    
     }
 }
