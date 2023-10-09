@@ -42,13 +42,11 @@ Route::group(['middleware' => ['web','auth:api']], function()
     //Income API       Expense API
     Route::get('/totalincome',[TransactionController::class,'income']);
     Route::get('/totalexpense',[TransactionController::class,'expense']);
+    //Search API
+    Route::get('/search/{search}',[TransactionController::class,'search']);
+    //Update Cash API
+    Route::put('/update-cash',[BankController::class,'updateCash']);
 });
-
-
-
-
-
-
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });

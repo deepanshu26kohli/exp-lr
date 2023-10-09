@@ -79,7 +79,7 @@ class TransactionController extends Controller
         }
         return ([
             'status' => 200,
-            'bank' =>   $transaction,
+            'transaction' =>   $transaction,
         ]);
     }
     public function update(TransactionsRequest $request, $id)
@@ -176,7 +176,7 @@ class TransactionController extends Controller
         }
     }
     public function income(){
-        $income = Transaction::whereHas('typeOfTransaction', function ($query) {
+        $income = Transaction::whereHas('TypeOfTransaction', function ($query) {
             $query->where('action', 1);
         })->sum('amount');
         if($income){
@@ -185,12 +185,21 @@ class TransactionController extends Controller
         return json_encode(["message"=>"Error Could not calculate expense"]);
     }
     public function expense(){
-        $expense = Transaction::whereHas('typeOfTransaction', function ($query) {
+        $expense = Transaction::whereHas('TypeOfTransaction', function ($query) {
             $query->where('action', 0);
         })->sum('amount');
         if($expense){
             return json_encode(["expense"=>$expense]);
         }
         return json_encode(["message"=>"Error Could not calculate expense"]);
+    }
+    public function search($search){
+        $res =Transaction::with(["head:id,name,color,typeoftransaction_id","bank:id,bank_name,account_number","typeoftransaction:id,name"])->where('head_id', 'LIKE', $search)->get();
+        if($res){
+            return json_encode($res);
+        }
+        else{
+            return json_encode(["message"=>"Could not Search fo this Header"]);
+        }
     }
 }

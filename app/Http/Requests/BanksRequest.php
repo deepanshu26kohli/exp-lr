@@ -39,7 +39,7 @@ class BanksRequest extends FormRequest
             'account_number' => 'required|numeric',
             'ifsc_code' => 'required|alpha_num',
             // 'ifbank' => 'required|boolean',
-            'bank_balance' => 'required|numeric'
+            'bank_balance' => 'required|numeric|min:1'
         ];
 
         if($this->method() == 'POST'){

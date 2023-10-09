@@ -169,4 +169,19 @@ class BankController extends Controller
             return json_encode(["message"=>"Could not fetch the total cash balance",'status' => 422]);
         }
     }
+    public function updateCash(Request $request){
+        $bank = Bank::find(999);
+        if($request->cash < 0){
+          return "Please enter a valid amount"; 
+        }
+        $bank->bank_balance =   $request->cash;
+        $check = $bank->update();
+        if($check){
+            return "Updated Successfully";
+        }
+        else{
+            return "Could not Update Cash";
+        }
+       
+    } 
 }
